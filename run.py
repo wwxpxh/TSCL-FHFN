@@ -225,10 +225,10 @@ def parse_args():
                         help='tune parameters ?')
     parser.add_argument('--train_mode', type=str, default="regression",
                         help='regression / classification')
-    parser.add_argument('--modelName', type=str, default='self_mm',
+    parser.add_argument('--modelName', type=str, default='TSCL-FHFN',
                         help='support self_mm')
     parser.add_argument('--datasetName', type=str, default='mosei',
-                        help='support mosi/mosei/sims')
+                        help='support mosi/mosei')
     parser.add_argument('--num_workers', type=int, default=0,
                         help='num workers of loading data')
     parser.add_argument('--model_save_dir', type=str, default='results/models',
@@ -242,9 +242,9 @@ def parse_args():
 if __name__ == '__main__':
     args = parse_args()
     logger = set_log(args)
-    for data_name in ['mosei']: #['sims', 'mosi', 'mosei']:
+    for data_name in ['mosei']:
         args.datasetName = data_name
-        args.seeds = [1111,1112,1113,1114,1115]#
+        args.seeds = [1113]
         if args.is_tune:
             run_tune(args, tune_times=50)
         else:
