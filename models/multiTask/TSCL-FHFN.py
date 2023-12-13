@@ -14,11 +14,11 @@ from torch.nn.utils.rnn import pad_sequence, pack_padded_sequence, pad_packed_se
 from models.subNets.transformers_encoder.transformer import TransformerEncoder
 from models.subNets.BertTextEncoder import BertTextEncoder
 
-__all__ = ['SELF_MM']
+__all__ = ['TSCL_FHFN']
 
-class SELF_MM(nn.Module):
+class TSCL_FHFN(nn.Module):
     def __init__(self, args):
-        super(SELF_MM, self).__init__()
+        super(TSCL_FHFN, self).__init__()
         # text subnets
         self.aligned = args.need_data_aligned
         self.text_model = BertTextEncoder(language=args.language, use_finetune=args.use_finetune)
@@ -62,10 +62,6 @@ class SELF_MM(nn.Module):
         self.post_fusion_layer_2 = nn.Linear(args.post_fusion_dim, args.post_fusion_dim)
         self.post_fusion_layer_3 = nn.Linear(args.post_fusion_dim, 1)
 
-
-        # the acc7_fusion layers
-        # self.post_classify_layer_1 = nn.Linear(args.post_fusion_dim, 64)
-        # self.post_classify_layer_2 = nn.Linear(64, 7)
         
         # define the post_fusion layers这是低秩张量融合网络，后面再用
         self.rank = args.rank[0] if args.need_data_aligned else args.rank[1]
@@ -142,8 +138,6 @@ class SELF_MM(nn.Module):
         proj_v = self.project_video_model(video.unsqueeze(-1)).squeeze(-1).unsqueeze(0)
 
 
-#         #cross_model这部分都是跨模态转换器的，后面再用
-#         #[seq_len,batch_size,dim]
         feature_at = self.trans_to_at(proj_t, proj_a, proj_a)
         feature_vt = self.trans_to_vt(proj_t, proj_v, proj_v)
         trans_t = torch.cat([feature_at,feature_vt],dim=2)[-1]
@@ -205,10 +199,6 @@ class SELF_MM(nn.Module):
             'text': text,
             'audio': audio,
             'video': video,
-            #'Gaussian_a': [mu_a, std_a],
-            #'Gaussian_v': [mu_v, std_v],
-            #'IB_a': output_a,
-            #'IB_v': output_v
         }
         return res
 
